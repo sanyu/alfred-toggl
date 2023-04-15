@@ -1,0 +1,24 @@
+#!/bin/bash
+# tg - Toggl wrapper with clipboard support
+#
+# Usage:
+#   tg start           # Reads task name from clipboard
+#   tg start "Task"    # Uses provided task name
+#   tg stop            # Passthrough to toggl stop
+#   tg current         # Passthrough to toggl current
+#   tg *               # Passthrough any other commands
+
+set -e
+
+if [[ "$1" == "start" && -z "$2" ]]; then
+    # No description provided, read from clipboard
+    description=$(pbpaste)
+    if [[ -z "$description" ]]; then
+        echo "Error: No description provided and clipboard is empty"
+        exit 1
+    fi
+    toggl start "$description"
+else
+    # Pass through to toggl
+    toggl "$@"
+fi
