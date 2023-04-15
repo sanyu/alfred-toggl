@@ -1,0 +1,25 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build alfredworkflow package
+        run: |
+          cd Toggl-Timer.alfredworkflow
+          zip -r ../Toggl-Timer.alfredworkflow.zip .
+          cd ..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: Toggl-Timer.alfredworkflow.zip
+          generate_release_notes: true
