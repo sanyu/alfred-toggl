@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.sanyu.toggl-timer</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>D91F3F4B-8E2C-4A5D-9C1E-3B7A8F6D2E1C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>E82A4C5D-9F3B-4D6E-8A2C-5B7F1E3D4A9B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B2C3D4E5-6F7A-8B9C-0D1E-2F3A4B5C6D7E</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C3D4E5F6-7A8B-9C0D-1E2F-3A4B5C6D7E8F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D4E5F6A7-8B9C-0D1E-2F3A-4B5C6D7E8F9A</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Sanyu</string>
+	<key>description</key>
+	<string>Start and stop Toggl timers from Alfred</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Toggl Timer</string>
+	<key>objects</key>
+	<array>
+		<!-- Universal Action: Start Timer -->
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>passthroughargument</key>
+				<false/>
+				<key>text</key>
+				<string>Start Toggl Timer</string>
+				<key>universalaction</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.action</string>
+			<key>uid</key>
+			<string>D91F3F4B-8E2C-4A5D-9C1E-3B7A8F6D2E1C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<!-- Script: Start Timer -->
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>toggl start "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>E82A4C5D-9F3B-4D6E-8A2C-5B7F1E3D4A9B</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<!-- Keyword: tgstop -->
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>tgstop</string>
+				<key>subtext</key>
+				<string>Stop the current Toggl timer</string>
+				<key>text</key>
+				<string>Stop Toggl Timer</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<!-- Script: Stop Timer -->
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>toggl stop</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B2C3D4E5-6F7A-8B9C-0D1E-2F3A4B5C6D7E</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<!-- Keyword: tgnow -->
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>tgnow</string>
+				<key>subtext</key>
+				<string>Show the current Toggl timer</string>
+				<key>text</key>
+				<string>Current Toggl Timer</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>C3D4E5F6-7A8B-9C0D-1E2F-3A4B5C6D7E8F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<!-- Script: Current Timer -->
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>toggl current</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D4E5F6A7-8B9C-0D1E-2F3A-4B5C6D7E8F9A</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Toggl Timer workflow for Alfred
+
+Usage:
+- Select text and use Universal Action "Start Toggl Timer"
+- Type "tgstop" to stop current timer
+- Type "tgnow" to see current timer</string>
+	<key>uidata</key>
+	<dict>
+		<key>D91F3F4B-8E2C-4A5D-9C1E-3B7A8F6D2E1C</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>E82A4C5D-9F3B-4D6E-8A2C-5B7F1E3D4A9B</key>
+		<dict>
+			<key>xpos</key>
+			<integer>250</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>200</integer>
+		</dict>
+		<key>B2C3D4E5-6F7A-8B9C-0D1E-2F3A4B5C6D7E</key>
+		<dict>
+			<key>xpos</key>
+			<integer>250</integer>
+			<key>ypos</key>
+			<integer>200</integer>
+		</dict>
+		<key>C3D4E5F6-7A8B-9C0D-1E2F-3A4B5C6D7E8F</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>350</integer>
+		</dict>
+		<key>D4E5F6A7-8B9C-0D1E-2F3A-4B5C6D7E8F9A</key>
+		<dict>
+			<key>xpos</key>
+			<integer>250</integer>
+			<key>ypos</key>
+			<integer>350</integer>
+		</dict>
+	</dict>
+	<key>variables</key>
+	<dict/>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/sanyu/alfred-toggl</string>
+</dict>
+</plist>
