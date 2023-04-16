@@ -9,7 +9,7 @@ A thin wrapper around [toggl-cli](https://github.com/watercooler-labs/toggl-cli)
 brew tap sanyu/tap
 
 # Install
-brew install sanyu/tap/toggl sanyu/tap/tg
+brew install sanyu/tap/toggl-cli sanyu/tap/tg
 ```
 
 ## Usage
