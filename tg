@@ -17,7 +17,7 @@ if [[ "$1" == "start" && -z "$2" ]]; then
         echo "Error: No description provided and clipboard is empty"
         exit 1
     fi
-    toggl start "$description"
+    toggl start -d "$description"
 else
     # Pass through to toggl
     toggl "$@"
