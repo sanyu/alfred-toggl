@@ -1,24 +1,244 @@
 #!/bin/bash
-# tg - Toggl wrapper with clipboard support
+# tg - Enhanced Toggl wrapper with Todoist integration and clipboard support
 #
-# Usage:
-#   tg start           # Reads task name from clipboard
-#   tg start "Task"    # Uses provided task name
-#   tg stop            # Passthrough to toggl stop
-#   tg current         # Passthrough to toggl current
-#   tg *               # Passthrough any other commands
+# Commands:
+#   tg start              # Start timer from clipboard (with project inference)
+#   tg start "Task"       # Start timer with explicit task name
+#   tg stop               # Stop current timer
+#   tg current            # Show current timer
+#   tg sync-projects      # Sync selected Todoist projects to Toggl
+#   tg refresh-cache      # Refresh task→project cache from Todoist
+#   tg *                  # Pass through to toggl CLI
 
 set -e
 
-if [[ "$1" == "start" && -z "$2" ]]; then
-    # No description provided, read from clipboard
-    description=$(pbpaste)
-    if [[ -z "$description" ]]; then
-        echo "Error: No description provided and clipboard is empty"
+CONFIG_DIR="$HOME/.tg"
+CONFIG_FILE="$CONFIG_DIR/config.json"
+
+# Initialize config directory
+init_config() {
+    if [[ ! -d "$CONFIG_DIR" ]]; then
+        mkdir -p "$CONFIG_DIR"
+    fi
+    if [[ ! -f "$CONFIG_FILE" ]]; then
+        echo '{"synced_projects":{},"task_project_cache":{}}' > "$CONFIG_FILE"
+    fi
+}
+
+# Get value from config using jq
+get_config() {
+    local key="$1"
+    jq -r "$key // empty" "$CONFIG_FILE" 2>/dev/null || echo ""
+}
+
+# Set value in config using jq
+set_config() {
+    local key="$1"
+    local value="$2"
+    local tmp=$(mktemp)
+    jq "$key = $value" "$CONFIG_FILE" > "$tmp" && mv "$tmp" "$CONFIG_FILE"
+}
+
+# Sync projects from Todoist to Toggl
+sync_projects() {
+    echo "🔄 Syncing projects from Todoist to Toggl..."
+
+    # Get all Todoist projects
+    echo "📋 Fetching Todoist projects..."
+    local projects=$(todoist projects --format csv | tail -n +2)
+
+    if [[ -z "$projects" ]]; then
+        echo "❌ No Todoist projects found. Make sure you're authenticated with 'todoist auth'"
         exit 1
     fi
-    toggl start -d "$description"
-else
-    # Pass through to toggl
-    toggl "$@"
-fi
+
+    # Display projects for selection
+    echo ""
+    echo "Select projects to sync (space to select, enter to confirm):"
+    echo ""
+
+    local selected_projects=()
+    local project_ids=()
+    local project_names=()
+
+    # Parse CSV and display
+    local i=1
+    while IFS=',' read -r id name color is_favorite view_style; do
+        # Remove quotes from name
+        name=$(echo "$name" | sed 's/"//g')
+        project_ids+=("$id")
+        project_names+=("$name")
+        echo "  [$i] $name"
+        ((i++))
+    done <<< "$projects"
+
+    echo ""
+    read -p "Enter project numbers to sync (space-separated, e.g., '1 3 5'): " selection
+
+    # Parse selection
+    for num in $selection; do
+        if [[ $num -gt 0 && $num -le ${#project_ids[@]} ]]; then
+            local idx=$((num - 1))
+            selected_projects+=("${project_names[$idx]}")
+
+            # Check if project exists in Toggl, create if not
+            echo "📌 Syncing: ${project_names[$idx]}"
+
+            # Get Toggl projects
+            local toggl_projects=$(toggl projects 2>/dev/null || echo "")
+            local toggl_project_id=""
+
+            # Check if project exists in Toggl
+            if echo "$toggl_projects" | grep -q "${project_names[$idx]}"; then
+                echo "   ✓ Already exists in Toggl"
+                # Extract project ID (assuming format: "ID: 123456 Name: project-name")
+                toggl_project_id=$(echo "$toggl_projects" | grep "${project_names[$idx]}" | sed -n 's/.*ID: \([0-9]*\).*/\1/p')
+            else
+                echo "   + Creating in Toggl..."
+                # Create project in Toggl
+                local create_output=$(toggl create project "${project_names[$idx]}" 2>&1)
+                toggl_project_id=$(echo "$create_output" | sed -n 's/.*ID: \([0-9]*\).*/\1/p')
+                echo "   ✓ Created with ID: $toggl_project_id"
+            fi
+
+            # Save to config
+            local tmp=$(mktemp)
+            jq ".synced_projects[\"${project_names[$idx]}\"] = {\"todoist_id\": \"${project_ids[$idx]}\", \"toggl_id\": \"$toggl_project_id\"}" "$CONFIG_FILE" > "$tmp" && mv "$tmp" "$CONFIG_FILE"
+        fi
+    done
+
+    echo ""
+    echo "✅ Sync complete! ${#selected_projects[@]} projects synced."
+    echo "💡 Run 'tg refresh-cache' to build the task→project cache."
+}
+
+# Refresh task→project cache from Todoist
+refresh_cache() {
+    echo "🔄 Refreshing task cache from Todoist..."
+    init_config
+
+    # Get synced projects
+    local synced_projects=$(jq -r '.synced_projects | keys[]' "$CONFIG_FILE")
+
+    if [[ -z "$synced_projects" ]]; then
+        echo "❌ No synced projects found. Run 'tg sync-projects' first."
+        exit 1
+    fi
+
+    # Clear existing cache
+    local tmp=$(mktemp)
+    jq '.task_project_cache = {}' "$CONFIG_FILE" > "$tmp" && mv "$tmp" "$CONFIG_FILE"
+
+    # For each synced project, fetch tasks and cache
+    while IFS= read -r project_name; do
+        echo "📋 Caching tasks from: $project_name"
+
+        # Get tasks for this project (using todoist list with filter)
+        local tasks=$(todoist list --filter "##${project_name}" --format csv 2>/dev/null | tail -n +2)
+
+        if [[ -n "$tasks" ]]; then
+            local task_count=0
+            while IFS=',' read -r id content project priority due labels; do
+                # Remove quotes from content
+                content=$(echo "$content" | sed 's/"//g')
+
+                # Add to cache
+                local tmp=$(mktemp)
+                jq ".task_project_cache[\"$content\"] = \"$project_name\"" "$CONFIG_FILE" > "$tmp" && mv "$tmp" "$CONFIG_FILE"
+                ((task_count++))
+            done <<< "$tasks"
+            echo "   ✓ Cached $task_count tasks"
+        fi
+    done <<< "$synced_projects"
+
+    echo ""
+    echo "✅ Cache refreshed successfully!"
+}
+
+# Infer project from task name using cache
+infer_project() {
+    local task_name="$1"
+    init_config
+
+    # Try exact match first
+    local project=$(jq -r ".task_project_cache[\"$task_name\"] // empty" "$CONFIG_FILE")
+
+    if [[ -n "$project" ]]; then
+        echo "$project"
+        return
+    fi
+
+    # Try fuzzy match (check if task name is substring of cached tasks)
+    local matched_project=$(jq -r ".task_project_cache | to_entries[] | select(.key | contains(\"$task_name\")) | .value" "$CONFIG_FILE" | head -1)
+
+    if [[ -n "$matched_project" ]]; then
+        echo "$matched_project"
+        return
+    fi
+
+    # No match found
+    echo ""
+}
+
+# Get Toggl project name from synced config
+get_toggl_project() {
+    local project_name="$1"
+    init_config
+
+    local toggl_id=$(jq -r ".synced_projects[\"$project_name\"].toggl_id // empty" "$CONFIG_FILE")
+    if [[ -n "$toggl_id" ]]; then
+        echo "$project_name"
+    else
+        echo ""
+    fi
+}
+
+# Start timer with project inference
+start_timer() {
+    local description="$1"
+
+    # If no description provided, read from clipboard
+    if [[ -z "$description" ]]; then
+        description=$(pbpaste)
+        if [[ -z "$description" ]]; then
+            echo "Error: No description provided and clipboard is empty"
+            exit 1
+        fi
+    fi
+
+    # Infer project from cache
+    local project=$(infer_project "$description")
+
+    if [[ -n "$project" ]]; then
+        echo "📌 Inferred project: $project"
+        toggl start -d "$description" -p "$project"
+    else
+        echo "ℹ️  No project found for this task (starting without project)"
+        toggl start -d "$description"
+    fi
+}
+
+# Main command routing
+case "$1" in
+    sync-projects)
+        init_config
+        sync_projects
+        ;;
+    refresh-cache)
+        refresh_cache
+        ;;
+    start)
+        if [[ -z "$2" ]]; then
+            # No args - use clipboard
+            start_timer ""
+        else
+            # Pass through remaining args
+            shift
+            toggl "$@"
+        fi
+        ;;
+    *)
+        # Pass through to toggl CLI
+        toggl "$@"
+        ;;
+esac
