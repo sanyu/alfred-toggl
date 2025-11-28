@@ -45,7 +45,7 @@ sync_projects() {
 
     # Get all Todoist projects
     echo "📋 Fetching Todoist projects..."
-    local projects=$(todoist projects --format csv | tail -n +2)
+    local projects=$(todoist --csv projects)
 
     if [[ -z "$projects" ]]; then
         echo "❌ No Todoist projects found. Make sure you're authenticated with 'todoist auth'"
@@ -61,11 +61,11 @@ sync_projects() {
     local project_ids=()
     local project_names=()
 
-    # Parse CSV and display
+    # Parse CSV and display (format: "<id>,#<name>")
     local i=1
-    while IFS=',' read -r id name color is_favorite view_style; do
-        # Remove quotes from name
-        name=$(echo "$name" | sed 's/"//g')
+    while IFS=',' read -r id name; do
+        # Remove # prefix from name
+        name=$(echo "$name" | sed 's/^#//')
         project_ids+=("$id")
         project_names+=("$name")
         echo "  [$i] $name"
@@ -211,10 +211,10 @@ start_timer() {
 
     if [[ -n "$project" ]]; then
         echo "📌 Inferred project: $project"
-        toggl start -d "$description" -p "$project"
+        toggl start -p "$project" "$description"
     else
         echo "ℹ️  No project found for this task (starting without project)"
-        toggl start -d "$description"
+        toggl start "$description"
     fi
 }
 
