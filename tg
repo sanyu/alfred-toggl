@@ -232,9 +232,8 @@ case "$1" in
             # No args - use clipboard
             start_timer ""
         else
-            # Pass through remaining args
-            shift
-            toggl "$@"
+            # With args - use provided description with project inference
+            start_timer "$2"
         fi
         ;;
     *)
