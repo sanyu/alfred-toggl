@@ -14,15 +14,44 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build alfredworkflow package
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Build Toggl-Timer workflow
         run: |
           mkdir -p dist
           cd Toggl-Timer.alfredworkflow
           zip -r ../dist/Toggl-Timer.alfredworkflow .
           cd ..
 
+      - name: Download and build AlfreDo-Toggl workflow
+        run: |
+          # Get latest AlfreDo release
+          LATEST_TAG=$(curl -s https://api.github.com/repos/giovannicoppola/AlfreDo/releases/latest | jq -r '.tag_name')
+          VERSION=${LATEST_TAG#v}
+
+          # Download AlfreDo
+          mkdir -p build/alfredo-original
+          curl -L "https://github.com/giovannicoppola/AlfreDo/releases/download/$LATEST_TAG/AlfreDo_$VERSION.alfredworkflow" \
+            -o build/alfredo-original.alfredworkflow
+          unzip -q build/alfredo-original.alfredworkflow -d build/alfredo-original
+
+          # Apply Toggl modifications
+          python3 alfredo-modifications/apply-modifications.py \
+            build/alfredo-original \
+            alfredo-modifications
+
+          # Package modified workflow
+          cd build/alfredo-original
+          zip -r ../../dist/AlfreDo-Toggl.alfredworkflow . -x "*.DS_Store"
+          cd ../..
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/Toggl-Timer.alfredworkflow
+          files: |
+            dist/Toggl-Timer.alfredworkflow
+            dist/AlfreDo-Toggl.alfredworkflow
           generate_release_notes: true
