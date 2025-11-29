@@ -28,9 +28,10 @@ jobs:
         id: alfredo_release
         run: |
           if [ "${{ github.event.inputs.alfredo_version }}" == "latest" ] || [ -z "${{ github.event.inputs.alfredo_version }}" ]; then
-            LATEST=$(curl -s https://api.github.com/repos/giovannicoppola/AlfreDo/releases/latest | jq -r '.tag_name')
-            echo "version=$LATEST" >> $GITHUB_OUTPUT
-            echo "download_url=https://github.com/giovannicoppola/AlfreDo/releases/download/$LATEST/AlfreDo_$LATEST.alfredworkflow" >> $GITHUB_OUTPUT
+            LATEST_TAG=$(curl -s https://api.github.com/repos/giovannicoppola/AlfreDo/releases/latest | jq -r '.tag_name')
+            VERSION=${LATEST_TAG#v}  # Strip 'v' prefix
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "download_url=https://github.com/giovannicoppola/AlfreDo/releases/download/$LATEST_TAG/AlfreDo_$VERSION.alfredworkflow" >> $GITHUB_OUTPUT
           else
             VERSION="${{ github.event.inputs.alfredo_version }}"
             echo "version=$VERSION" >> $GITHUB_OUTPUT
