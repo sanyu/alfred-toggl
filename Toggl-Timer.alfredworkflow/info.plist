@@ -62,17 +62,19 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argument</key>
+				<key>acceptsfiles</key>
+				<false/>
+				<key>acceptsmulti</key>
 				<integer>0</integer>
-				<key>passthroughargument</key>
+				<key>acceptstext</key>
 				<true/>
-				<key>text</key>
+				<key>acceptsurls</key>
+				<false/>
+				<key>name</key>
 				<string>Start Toggl Timer</string>
-				<key>universalaction</key>
-				<integer>1</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.trigger.action</string>
+			<string>alfred.workflow.trigger.universalaction</string>
 			<key>uid</key>
 			<string>D91F3F4B-8E2C-4A5D-9C1E-3B7A8F6D2E1C</string>
 			<key>version</key>
@@ -252,7 +254,7 @@ Usage:
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.0.7</string>
+	<string>1.0.8</string>
 	<key>webaddress</key>
 	<string>https://github.com/sanyu/alfred-toggl</string>
 </dict>
