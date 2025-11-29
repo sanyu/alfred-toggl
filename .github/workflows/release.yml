@@ -22,19 +22,24 @@ jobs:
       - name: Build Toggl-Timer workflow
         run: |
           mkdir -p dist
+
+          # Extract version from tag (v1.1.0 -> 1.1.0)
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+
+          # Build Toggl-Timer workflow
           cd Toggl-Timer.alfredworkflow
-          zip -r ../dist/Toggl-Timer.alfredworkflow .
+          zip -r "../dist/Toggl-Timer-${TAG_VERSION}.alfredworkflow" .
           cd ..
 
       - name: Download and build AlfreDo-Toggl workflow
         run: |
           # Get latest AlfreDo release
           LATEST_TAG=$(curl -s https://api.github.com/repos/giovannicoppola/AlfreDo/releases/latest | jq -r '.tag_name')
-          VERSION=${LATEST_TAG#v}
+          ALFREDO_VERSION=${LATEST_TAG#v}
 
           # Download AlfreDo
           mkdir -p build/alfredo-original
-          curl -L "https://github.com/giovannicoppola/AlfreDo/releases/download/$LATEST_TAG/AlfreDo_$VERSION.alfredworkflow" \
+          curl -L "https://github.com/giovannicoppola/AlfreDo/releases/download/$LATEST_TAG/AlfreDo_$ALFREDO_VERSION.alfredworkflow" \
             -o build/alfredo-original.alfredworkflow
           unzip -q build/alfredo-original.alfredworkflow -d build/alfredo-original
 
@@ -43,15 +48,13 @@ jobs:
             build/alfredo-original \
             alfredo-modifications
 
-          # Package modified workflow
+          # Package modified workflow with version
           cd build/alfredo-original
-          zip -r ../../dist/AlfreDo-Toggl.alfredworkflow . -x "*.DS_Store"
+          zip -r "../../dist/AlfreDo-${ALFREDO_VERSION}-Toggl.alfredworkflow" . -x "*.DS_Store"
           cd ../..
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            dist/Toggl-Timer.alfredworkflow
-            dist/AlfreDo-Toggl.alfredworkflow
+          files: dist/*.alfredworkflow
           generate_release_notes: true
