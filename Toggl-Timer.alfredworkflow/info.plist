@@ -244,19 +244,27 @@
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
-		<!-- Output: Large Type for Current -->
+		<!-- Output: Notification for Current -->
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>largetype</key>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
 				<string>{query}</string>
+				<key>title</key>
+				<string>Current Timer</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.largetype</string>
+			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
 			<string>A8B9C0D1-2E3F-4A5B-6C7D-8E9F0A1B2C3D</string>
 			<key>version</key>
-			<integer>3</integer>
+			<integer>1</integer>
 		</dict>
 	</array>
 	<key>readme</key>
@@ -330,7 +338,7 @@ Usage:
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.0.9</string>
+	<string>1.1.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sanyu/alfred-toggl</string>
 </dict>
