@@ -82,21 +82,21 @@ jobs:
             gh release upload "$TAG" build/AlfreDo-Toggl.alfredworkflow --clobber
           else
             echo "Creating new release $TAG"
+
+            NOTES="Modified AlfreDo v${VERSION} with Toggl integration
+
+          ## Added Features
+          - **⌘↩️ (cmd-enter)**: Copy task name to clipboard 📋
+          - **⌥↩️ (option-enter)**: Start Toggl timer with project inference ⏱️
+
+          ## Base Version
+          - AlfreDo v${VERSION}
+
+          ## Modifications
+          This workflow includes automated Toggl integration modifications. See [alfredo-modifications/](https://github.com/${{ github.repository }}/tree/master/alfredo-modifications) for details."
+
             gh release create "$TAG" \
               --title "AlfreDo-Toggl v${VERSION}" \
-              --notes "$(cat <<'EOF'
-Modified AlfreDo v${VERSION} with Toggl integration
-
-## Added Features
-- **⌘↩️ (cmd-enter)**: Copy task name to clipboard 📋
-- **⌥↩️ (option-enter)**: Start Toggl timer with project inference ⏱️
-
-## Base Version
-- AlfreDo v${VERSION}
-
-## Modifications
-This workflow includes automated Toggl integration modifications. See [alfredo-modifications/](https://github.com/${{ github.repository }}/tree/master/alfredo-modifications) for details.
-EOF
-)" \
+              --notes "$NOTES" \
               build/AlfreDo-Toggl.alfredworkflow
           fi
