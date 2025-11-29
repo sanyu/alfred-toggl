@@ -5,13 +5,25 @@
       "config": {
         "concurrently": false,
         "escaping": 102,
-        "script": "echo \"$myTaskContent\" | pbcopy",
+        "script": "echo \"$myTaskContent\" | pbcopy && echo \"$myTaskContent\"",
         "scriptargtype": 1,
         "scriptfile": "",
         "type": 0
       },
       "type": "alfred.workflow.action.script",
       "version": 2
+    },
+    {
+      "name": "copy-task-notification",
+      "config": {
+        "lastpathcomponent": false,
+        "onlyshowifquerypopulated": false,
+        "removeextension": false,
+        "text": "{query}",
+        "title": "Copied to Clipboard"
+      },
+      "type": "alfred.workflow.output.notification",
+      "version": 1
     },
     {
       "name": "start-timer",
@@ -25,6 +37,18 @@
       },
       "type": "alfred.workflow.action.script",
       "version": 2
+    },
+    {
+      "name": "start-timer-notification",
+      "config": {
+        "lastpathcomponent": false,
+        "onlyshowifquerypopulated": false,
+        "removeextension": false,
+        "text": "{query}",
+        "title": "Timer Started"
+      },
+      "type": "alfred.workflow.output.notification",
+      "version": 1
     }
   ],
   "connections": [
@@ -48,6 +72,16 @@
           "vitoclose": true
         }
       ]
+    }
+  ],
+  "action_chains": [
+    {
+      "from": "copy-task",
+      "to": "copy-task-notification"
+    },
+    {
+      "from": "start-timer",
+      "to": "start-timer-notification"
     }
   ]
 }

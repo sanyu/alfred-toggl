@@ -68,6 +68,36 @@ def apply_plist_modifications(alfredo_dir: Path, modifications: dict):
                 plist['connections'][source_uid].append(connection)
                 print(f"✅ Added connection for {source_uid[:8]}... -> {action_name}")
 
+    # Add action chains (action-to-action connections)
+    if 'action_chains' in modifications:
+        for chain in modifications['action_chains']:
+            from_action = chain['from']
+            to_action = chain['to']
+
+            if from_action not in action_uids:
+                print(f"⚠️  Warning: Source action {from_action} not found")
+                continue
+            if to_action not in action_uids:
+                print(f"⚠️  Warning: Destination action {to_action} not found")
+                continue
+
+            from_uid = action_uids[from_action]
+            to_uid = action_uids[to_action]
+
+            # Initialize connections array if it doesn't exist
+            if from_uid not in plist['connections']:
+                plist['connections'][from_uid] = []
+
+            # Add connection from action to action
+            connection = {
+                'destinationuid': to_uid,
+                'modifiers': 0,
+                'modifiersubtext': '',
+                'vitoclose': False
+            }
+            plist['connections'][from_uid].append(connection)
+            print(f"✅ Added action chain: {from_action} -> {to_action}")
+
     # Write back
     with open(plist_path, 'wb') as f:
         plistlib.dump(plist, f)
