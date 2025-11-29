@@ -51,7 +51,7 @@
 	<key>createdby</key>
 	<string>Sanyu</string>
 	<key>description</key>
-	<string>Start and stop Toggl timers from Alfred</string>
+	<string>Start and stop Toggl timers from Alfred. Works with AlfreDo for seamless Todoist task tracking.</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>

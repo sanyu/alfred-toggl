@@ -16,12 +16,13 @@ jobs:
 
       - name: Build alfredworkflow package
         run: |
+          mkdir -p dist
           cd Toggl-Timer.alfredworkflow
-          zip -r ../Toggl-Timer.alfredworkflow.zip .
+          zip -r ../dist/Toggl-Timer.alfredworkflow .
           cd ..
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: Toggl-Timer.alfredworkflow.zip
+          files: dist/Toggl-Timer.alfredworkflow
           generate_release_notes: true
