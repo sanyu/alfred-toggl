@@ -89,7 +89,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>/opt/homebrew/bin/tg start "{query}"</string>
+				<string>/opt/homebrew/bin/tg start "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -254,7 +254,7 @@ Usage:
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.0.8</string>
+	<string>1.0.9</string>
 	<key>webaddress</key>
 	<string>https://github.com/sanyu/alfred-toggl</string>
 </dict>
