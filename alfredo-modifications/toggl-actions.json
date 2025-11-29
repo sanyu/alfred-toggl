@@ -1,0 +1,53 @@
+{
+  "actions": [
+    {
+      "name": "copy-task",
+      "config": {
+        "concurrently": false,
+        "escaping": 102,
+        "script": "echo \"$myTaskContent\" | pbcopy",
+        "scriptargtype": 1,
+        "scriptfile": "",
+        "type": 0
+      },
+      "type": "alfred.workflow.action.script",
+      "version": 2
+    },
+    {
+      "name": "start-timer",
+      "config": {
+        "concurrently": false,
+        "escaping": 102,
+        "script": "/opt/homebrew/bin/tg start \"$myTaskContent\"",
+        "scriptargtype": 1,
+        "scriptfile": "",
+        "type": 0
+      },
+      "type": "alfred.workflow.action.script",
+      "version": 2
+    }
+  ],
+  "connections": [
+    {
+      "source_filters": [
+        "53FCDE38-AD23-4C03-8FCE-26B2F4B0B273",
+        "58F1C106-FCD5-4B74-AA67-075E179C67EB",
+        "42727175-B99E-4935-B6AB-1D288B48A8DE"
+      ],
+      "connections": [
+        {
+          "action": "copy-task",
+          "modifiers": 1048576,
+          "modifiersubtext": "Copy task name to clipboard 📋",
+          "vitoclose": true
+        },
+        {
+          "action": "start-timer",
+          "modifiers": 524288,
+          "modifiersubtext": "Start Toggl timer ⏱️",
+          "vitoclose": true
+        }
+      ]
+    }
+  ]
+}

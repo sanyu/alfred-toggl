@@ -4,6 +4,36 @@ A smart wrapper around [toggl-cli](https://github.com/watercooler-labs/toggl-cli
 - **Clipboard support** for quick timer starts
 - **Todoist integration** for automatic project inference
 - **Local caching** to avoid API rate limits
+- **Alfred workflows** for one-key timer control
+
+## Alfred Workflows
+
+This repo includes two Alfred workflows:
+
+### 1. Toggl Timer (Standalone)
+Universal Action for starting timers from selected text.
+
+**Download**: [Latest Release](https://github.com/sanyu/alfred-toggl/releases/latest)
+
+**Usage:**
+- Select text anywhere → Universal Actions → "Start Toggl Timer"
+- Keywords: `tgstop` (stop), `tgnow` (current)
+
+### 2. AlfreDo-Toggl (Enhanced Todoist Integration)
+Modified [AlfreDo](https://github.com/giovannicoppola/AlfreDo) with built-in Toggl integration.
+
+**Download**: [Latest AlfreDo-Toggl Release](https://github.com/sanyu/alfred-toggl/releases?q=alfredo-toggl)
+
+**New Features:**
+- **⌘↩️ (cmd-enter)**: Copy task name to clipboard 📋
+- **⌥↩️ (option-enter)**: Start Toggl timer ⏱️ (with project inference!)
+
+**How it works:**
+1. Open AlfreDo (`!1` for today's tasks)
+2. Select a task
+3. Press **⌥↩️** → Timer starts automatically with correct project!
+
+See [`alfredo-modifications/`](alfredo-modifications/) for technical details on how modifications are applied.
 
 ## Installation
 

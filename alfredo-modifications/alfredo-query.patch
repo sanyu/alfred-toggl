@@ -1,0 +1,11 @@
+--- a/alfredo-query.py
++++ b/alfredo-query.py
+@@ -442,7 +442,7 @@
+                     "alt": {
+
+                         "arg": "",
+-                        "subtitle": ""
++                        "subtitle": "Start Toggl timer ⏱️"
+                                 },
+              },
+             "icon": {
